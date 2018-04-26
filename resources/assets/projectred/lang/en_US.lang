@@ -438,6 +438,7 @@ item.projectred.integration.gate|31.name=Data Cell
 item.projectred.integration.gate|32.name=Segment Display Gate
 item.projectred.integration.gate|33.name=Dec Randomizer
 item.projectred.integration.gate|34.name=IC Gate
+item.projectred.integration.gate|35.name=Monostable
 
 
 item.projectred.transmission.wire|0.name=Red Alloy Wire

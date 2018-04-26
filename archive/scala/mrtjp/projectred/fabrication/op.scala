@@ -96,6 +96,7 @@ object CircuitOpDefs extends Enum
     val NullCellGate = OpDef(new OpGate(ICGateDefinition.NullCell.ordinal))
     val InvertCellGate = OpDef(new OpGate(ICGateDefinition.InvertCell.ordinal))
     val BufferCellGate = OpDef(new OpGate(ICGateDefinition.BufferCell.ordinal))
+    val MonostableGate = OpDef(new OpGate(ICGateDefinition.Monostable.ordinal))
 
     val INSULATED = WhiteInsulatedWire to BlackInsulatedWire toArray
     val BUNDLED = NeutralBundledCable to BlackBundledCable toArray

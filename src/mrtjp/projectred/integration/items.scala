@@ -121,6 +121,7 @@ object GateDefinition extends ItemDefinition
     val SegmentDisplay = new GateDef(typeBundledGate)
     val DecRandomizer = new GateDef(typeSimpleGate)
     val ICGate = new GateDef("pr_icgate", true)
+    val Monostable = new GateDef(typeComplexGate)
 
     class GateDef(val partname:String, val hidden:Boolean = false) extends ItemDef(partname)
     {

@@ -60,6 +60,7 @@ object SequentialICGateLogic
         case defs.Counter.ordinal => new Counter(gate)
         case defs.StateCell.ordinal => new StateCell(gate)
         case defs.Synchronizer.ordinal => new Synchronizer(gate)
+        case defs.Monostable.ordinal => new Monostable(gate)
         case _ => throw new IllegalArgumentException("Invalid gate subID: "+subID)
     }
 }
@@ -791,5 +792,46 @@ class Synchronizer(gate:SequentialGateICPart) extends SequentialICGateLogic(gate
             data += "1: "+(if (left) "high" else "low")
         }
         super.getRolloverData(gate, detailLevel)++data.result()
+    }
+}
+
+class Monostable(gate:SequentialGateICPart) extends SequentialICGateLogic(gate) with TTimerGateLogic
+{
+    override def outputMask(shape:Int) = 0xB
+    override def inputMask(shape:Int) = 0xE
+
+    override def setup(gate:SequentialGateICPart){ startPointer() }
+
+    override def scheduledTick(gate:SequentialGateICPart)
+    {
+        gate.setState(gate.state&0xF)
+        gate.onOutputChange(0xB)
+        onChange(gate)
+    }
+
+    override def onChange(gate:SequentialGateICPart)
+    {
+        val oldInput = gate.state&0xF
+        val newInput = getInput(gate, 0xE)
+
+        if (newInput != oldInput)
+        {
+            gate.setState(gate.state&0xF0|newInput)
+            gate.onInputChange()
+        }
+
+        if (gate.schedTime < 0)
+            if (newInput > 0) resetPointer() else startPointer()
+    }
+
+    override def pointerTick()
+    {
+        resetPointer()
+        if (!gate.world.network.isRemote)
+        {
+            gate.scheduleTick(2)
+            gate.setState(0xB0|gate.state&0xF)
+            gate.onOutputChange(0xB)
+        }
     }
 }

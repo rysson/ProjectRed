@@ -60,7 +60,8 @@ object RenderGate extends IIconRegister
         new RenderStackingLatch,
         new RenderSegmentDisplay,
         new RenderDecodingRand,
-        GateRenderer.blank//circuit gate renderer will be injected.
+        GateRenderer.blank,//circuit gate renderer will be injected.
+        new RenderMonostable
     )
 
 
@@ -1390,5 +1391,46 @@ class RenderDecodingRand extends GateRenderer[ComboGatePart]
         chips(0).on = (state>>4) == 2
         chips(1).on = (state>>4) == 1 || (state>>4) == 2
         chips(2).on = true
+    }
+}
+
+class RenderMonostable extends GateRenderer[SequentialGatePart]
+{
+    val wires = generateWireModels("MONOSTABLE", 3)
+    val torches = Seq(new RedstoneTorchModel(8, 3, 6), new RedstoneTorchModel(8, 8, 10))
+    val pointer = new PointerModel(8, 8, 8)
+
+    override val coreModels = wires++torches:+new BaseComponentModel
+
+    override def prepareInv()
+    {
+        wires(0).on = false
+        wires(1).on = false
+        wires(2).on = false
+        torches(0).on = false
+        pointer.angle = 0
+    }
+
+    override def prepare(gate:SequentialGatePart)
+    {
+        torches(0).on = (gate.state&0x10) != 0
+        wires(0).on = (gate.state&0x88) != 0
+        wires(1).on = (gate.state&0x22) != 0
+        wires(2).on = (gate.state&4) != 0
+    }
+
+    override def hasSpecials = true
+
+    override def prepareDynamic(part:SequentialGatePart, frame:Float)
+    {
+        pointer.angle = part.getLogic[TTimerGateLogic].interpPointer(frame)*MathHelper.pi*2
+    }
+
+    override def renderDynamic(t:Transformation, ccrs:CCRenderState)
+    {
+        ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM)
+        ccrs.pullLightmap()
+        pointer.renderModel(t, 0, ccrs)
+        ccrs.draw()
     }
 }

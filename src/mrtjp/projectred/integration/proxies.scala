@@ -464,5 +464,17 @@ object IntegrationRecipes
             'E':JChar, PartDefs.ENERGIZEDSILICONCHIP.makeStack,
             'W':JChar, PartDefs.CONDUCTIVEPLATE.makeStack
         )
+
+        /** Monostable Gate **/
+        GameRegistry.addRecipe(GateDefinition.Monostable.makeStack,
+                "ACA",
+                "WTW",
+                "PTP",
+                'A':JChar, PartDefs.ANODE.makeStack,
+                'C':JChar, PartDefs.CATHODE.makeStack,
+                'W':JChar, PartDefs.CONDUCTIVEPLATE.makeStack,
+                'T':JChar, PartDefs.POINTER.makeStack,
+                'P':JChar, PartDefs.PLATE.makeStack
+        )
     }
 }
